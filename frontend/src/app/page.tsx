@@ -1,22 +1,22 @@
-'use client';
+"use client";
 //import WalletConnect from '../components/WalletConnect';
-import { aiService } from '../ai/ai';
+import { aiService } from "../ai/ai";
 
-import { useState, useEffect } from 'react';
-import { Suspense } from 'react';
-import { validateApiKey } from '@/utils/groq';
-import logger from '@/utils/logger';
-import { useWallet } from '@solana/wallet-adapter-react'; 
+import { useState, useEffect } from "react";
+import { Suspense } from "react";
+import { validateApiKey } from "@/utils/groq";
+import logger from "@/utils/logger";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 // Components
-import ApiKeyModal from '@/components/ApiKeyModal';
-import Chat from '@/components/Chat';
-import { agentWallet } from '@/utils/wallet';
- 
+import ApiKeyModal from "@/components/ApiKeyModal";
+import Chat from "@/components/Chat";
+import { agentWallet } from "@/utils/wallet";
+
 // Constants
 const STORAGE_KEYS = {
-  API_KEY: 'jenna_api_key',
-  WALLET_CONNECTED: 'jenna_wallet_connected'
+  API_KEY: "EARTHZETA_api_key",
+  WALLET_CONNECTED: "EARTHZETA_wallet_connected",
 } as const;
 
 export default function Home() {
@@ -50,18 +50,20 @@ export default function Home() {
         try {
           const walletConnected = await agentWallet.initialize();
           setIsWalletInitialized(walletConnected);
-          localStorage.setItem(STORAGE_KEYS.WALLET_CONNECTED, String(walletConnected));
-          logger.success('Services initialized successfully');
+          localStorage.setItem(
+            STORAGE_KEYS.WALLET_CONNECTED,
+            String(walletConnected)
+          );
+          logger.success("Services initialized successfully");
         } catch (error) {
-          console.error('Wallet initialization error:', error);
+          console.error("Wallet initialization error:", error);
           setIsWalletInitialized(false);
-          logger.warn('Services initialization partial or failed');
+          logger.warn("Services initialization partial or failed");
         }
-
       } catch (error) {
-        console.error('Service initialization error:', error);
+        console.error("Service initialization error:", error);
         setIsApiKeyModalOpen(true);
-        logger.error('Services initialization error:', error);
+        logger.error("Services initialization error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -74,16 +76,16 @@ export default function Home() {
   const handleApiKeySubmit = async (apiKey: string) => {
     try {
       const isValid = await validateApiKey(apiKey);
-      
+
       if (isValid) {
         localStorage.setItem(STORAGE_KEYS.API_KEY, apiKey);
         setHasValidApiKey(true);
         setIsApiKeyModalOpen(false);
       } else {
-        throw new Error('Invalid API key');
+        throw new Error("Invalid API key");
       }
     } catch (error) {
-      console.error('API key validation error:', error);
+      console.error("API key validation error:", error);
       setHasValidApiKey(false);
     }
   };
@@ -112,8 +114,8 @@ export default function Home() {
       const analysis = await aiService.fetchAndAnalyzePrice(tokenAddress);
       setPriceAnalysis(analysis);
     } catch (error) {
-      logger.error('Error fetching and analyzing price:', error);
-      setPriceAnalysis('Error fetching and analyzing price. Please try again.');
+      logger.error("Error fetching and analyzing price:", error);
+      setPriceAnalysis("Error fetching and analyzing price. Please try again.");
     }
   };
 
@@ -123,7 +125,9 @@ export default function Home() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Initializing JENNA...</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Initializing EARTHZETA...
+          </p>
         </div>
       </div>
     );
@@ -135,21 +139,21 @@ export default function Home() {
         {/* Main Heading - Keep only one */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            JENNA - Solana Trading Assistant
+            EARTHZETA - Solana Trading Assistant
           </h1>
-          
+
           {/* Wallet Status Indicator */}
           <div className="flex items-center gap-2">
             {connected ? (
               <span className="inline-flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Wallet Connected</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Wallet Connected
+                </span>
               </span>
             ) : null}
           </div>
         </div>
-
-        
 
         {walletAddress && (
           <div className="mt-8">
@@ -161,13 +165,15 @@ export default function Home() {
             </button>
             {priceAnalysis && (
               <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                <pre className="text-sm text-gray-800 dark:text-gray-200">{priceAnalysis}</pre>
+                <pre className="text-sm text-gray-800 dark:text-gray-200">
+                  {priceAnalysis}
+                </pre>
               </div>
             )}
           </div>
         )}
 
-        <Suspense 
+        <Suspense
           fallback={
             <div className="flex justify-center items-center h-64">
               <div className="animate-pulse text-gray-600 dark:text-gray-300">
@@ -179,7 +185,7 @@ export default function Home() {
           {hasValidApiKey && <Chat />}
         </Suspense>
 
-        <ApiKeyModal 
+        <ApiKeyModal
           isOpen={isApiKeyModalOpen}
           onClose={handleModalClose}
           onApiKeySubmit={handleApiKeySubmit}

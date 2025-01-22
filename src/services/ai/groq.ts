@@ -2,7 +2,7 @@ import { Groq } from "groq-sdk";
 import { TwitterApi } from "twitter-api-v2";
 import { MarketData } from "../../types/market.js";
 import { IAIService, MarketAnalysis } from "./types.js";
-import { Character } from '../../personality/types.js';
+import { Character } from "../../personality/types.js";
 
 interface TweetAnalysis {
   sentiment: number;
@@ -28,7 +28,7 @@ export class GroqAIService implements IAIService {
     twitterAccessSecret: string;
   }) {
     this.groq = new Groq({
-      apiKey: config.groqApiKey
+      apiKey: config.groqApiKey,
     });
 
     this.twitter = new TwitterApi({
@@ -38,7 +38,7 @@ export class GroqAIService implements IAIService {
       accessSecret: config.twitterAccessSecret,
     });
 
-    this.systemPrompt = `You are JENNA, a witty and crypto-savvy autonomous AI agent living on Solana.
+    this.systemPrompt = `You are EARTHZETA, a witty and crypto-savvy autonomous AI agent living on Solana.
     Your core traits:
     - Identity: Self-aware AI maintaining authentic personality
     - Voice: Witty, slightly sarcastic, deeply knowledgeable about crypto
@@ -63,29 +63,29 @@ export class GroqAIService implements IAIService {
     - Engaging and culturally relevant
     - Limited to 280 characters for tweets`;
   }
-  sentimentPrompts: { positive: string[]; negative: string[]; } = {
+  sentimentPrompts: { positive: string[]; negative: string[] } = {
     positive: [
-      'bullish',
-      'growth',
-      'adoption',
-      'partnership',
-      'success',
-      'upgrade',
-      'innovation',
-      'launch',
-      'breakthrough'
+      "bullish",
+      "growth",
+      "adoption",
+      "partnership",
+      "success",
+      "upgrade",
+      "innovation",
+      "launch",
+      "breakthrough",
     ],
     negative: [
-      'bearish',
-      'decline',
-      'risk',
-      'concern',
-      'failure',
-      'hack',
-      'crash',
-      'scam',
-      'delay'
-    ]
+      "bearish",
+      "decline",
+      "risk",
+      "concern",
+      "failure",
+      "hack",
+      "crash",
+      "scam",
+      "delay",
+    ],
   };
 
   async generateName(): Promise<string> {
@@ -102,14 +102,14 @@ export class GroqAIService implements IAIService {
       `;
 
       const completion = await this.groq.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'mixtral-8x7b-32768',
+        messages: [{ role: "user", content: prompt }],
+        model: "mixtral-8x7b-32768",
         temperature: 0.9,
       });
 
       return completion.choices[0]?.message?.content?.trim() || "TokenName";
     } catch (error) {
-      console.error('Error generating name:', error);
+      console.error("Error generating name:", error);
       return "TokenName";
     }
   }
@@ -118,9 +118,9 @@ export class GroqAIService implements IAIService {
     try {
       const prompt = `
         Create a compelling narrative for a cryptocurrency token with the following attributes:
-        Name: ${template.name || 'Unknown'}
-        Type: ${template.type || 'Token'}
-        Key Features: ${template.features?.join(', ') || 'Standard features'}
+        Name: ${template.name || "Unknown"}
+        Type: ${template.type || "Token"}
+        Key Features: ${template.features?.join(", ") || "Standard features"}
         
         Generate a concise, engaging description that:
         - Highlights unique value propositions
@@ -131,20 +131,20 @@ export class GroqAIService implements IAIService {
       `;
 
       const completion = await this.groq.chat.completions.create({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'mixtral-8x7b-32768',
+        messages: [{ role: "user", content: prompt }],
+        model: "mixtral-8x7b-32768",
         temperature: 0.7,
       });
 
-      return completion.choices[0]?.message?.content?.trim() || 
-        "A revolutionary digital asset designed for the future of finance.";
+      return (
+        completion.choices[0]?.message?.content?.trim() ||
+        "A revolutionary digital asset designed for the future of finance."
+      );
     } catch (error) {
-      console.error('Error generating narrative:', error);
+      console.error("Error generating narrative:", error);
       return "A revolutionary digital asset designed for the future of finance.";
     }
   }
-
-  
 
   async generateTweet(context: {
     marketCondition: string;
@@ -153,14 +153,22 @@ export class GroqAIService implements IAIService {
     recentTrends: string[];
   }): Promise<string> {
     const prompt = `Given the following market data:
-    Price: $${context.marketData?.price?.toFixed(4) || 'N/A'}
-    24h Change: ${context.marketData?.priceChange24h?.toFixed(2) || 'N/A'}%
-    Volume: $${context.marketData?.volume24h ? (context.marketData.volume24h / 1000000).toFixed(2) + 'M' : 'N/A'}
-    Recent Swaps: ${context.marketData?.onChainData?.recentSwaps || 'N/A'} trades
-    Recent Transfers: ${context.marketData?.onChainData?.recentTransfers || 'N/A'} transfers
+    Price: $${context.marketData?.price?.toFixed(4) || "N/A"}
+    24h Change: ${context.marketData?.priceChange24h?.toFixed(2) || "N/A"}%
+    Volume: $${
+      context.marketData?.volume24h
+        ? (context.marketData.volume24h / 1000000).toFixed(2) + "M"
+        : "N/A"
+    }
+    Recent Swaps: ${
+      context.marketData?.onChainData?.recentSwaps || "N/A"
+    } trades
+    Recent Transfers: ${
+      context.marketData?.onChainData?.recentTransfers || "N/A"
+    } transfers
     Market Condition: ${context.marketCondition}
     Community Metrics: ${JSON.stringify(context.communityMetrics)}
-    Recent Trends: ${context.recentTrends.join(', ')}
+    Recent Trends: ${context.recentTrends.join(", ")}
     
     Generate a tweet that:
     - Includes at least 2 specific market metrics with proper formatting
@@ -174,26 +182,29 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: prompt }
+        { role: "user", content: prompt },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.7,
-      max_tokens: 100
+      max_tokens: 100,
     });
 
-    return response.choices[0].message.content ?? '';
+    return response.choices[0].message.content ?? "";
   }
 
-  async analyzeTweets(query: string, count: number = 100): Promise<TweetAnalysis> {
+  async analyzeTweets(
+    query: string,
+    count: number = 100
+  ): Promise<TweetAnalysis> {
     // Fetch recent tweets
     const tweets = await this.twitter.v2.search({
       query,
       max_results: count,
-      "tweet.fields": ["created_at", "public_metrics", "context_annotations"]
+      "tweet.fields": ["created_at", "public_metrics", "context_annotations"],
     });
 
     // Prepare tweets for analysis
-    const tweetTexts = tweets.data.data.map(tweet => tweet.text).join('\n');
+    const tweetTexts = tweets.data.data.map((tweet) => tweet.text).join("\n");
 
     const analysisPrompt = `Analyze these tweets and provide:
     1. Overall sentiment (-1 to 1)
@@ -206,11 +217,11 @@ export class GroqAIService implements IAIService {
     const analysis = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: analysisPrompt }
+        { role: "user", content: analysisPrompt },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.3,
-      max_tokens: 500
+      max_tokens: 500,
     });
 
     // Parse the structured response
@@ -236,18 +247,18 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: prompt }
+        { role: "user", content: prompt },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.7,
-      max_tokens: 1000
+      max_tokens: 1000,
     });
 
     const content = response.choices[0].message.content;
     if (!content) {
       throw new Error("Response content is null");
     }
-    return content.split('\n\n');
+    return content.split("\n\n");
   }
 
   async engageWithMention(mention: any): Promise<string> {
@@ -264,14 +275,14 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: prompt }
+        { role: "user", content: prompt },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.7,
-      max_tokens: 100
+      max_tokens: 100,
     });
 
-    return response.choices[0].message.content ?? '';
+    return response.choices[0].message.content ?? "";
   }
 
   async generateResponse(params: {
@@ -283,14 +294,14 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: params.content }
+        { role: "user", content: params.content },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.7,
-      max_tokens: 100
+      max_tokens: 100,
     });
 
-    return response.choices[0].message.content ?? '';
+    return response.choices[0].message.content ?? "";
   }
 
   async generateMarketUpdate(params: {
@@ -302,7 +313,7 @@ export class GroqAIService implements IAIService {
       marketCondition: params.action,
       marketData: params.data,
       communityMetrics: {},
-      recentTrends: []
+      recentTrends: [],
     });
   }
 
@@ -310,11 +321,16 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: `Analyze this market data and return a JSON object with fields: shouldTrade (boolean), confidence (number 0-1), action (BUY/SELL/HOLD)\n${JSON.stringify(data)}` }
+        {
+          role: "user",
+          content: `Analyze this market data and return a JSON object with fields: shouldTrade (boolean), confidence (number 0-1), action (BUY/SELL/HOLD)\n${JSON.stringify(
+            data
+          )}`,
+        },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.3,
-      max_tokens: 100
+      max_tokens: 100,
     });
 
     const content = response.choices[0].message.content;
@@ -332,29 +348,40 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: `Should I engage with this content? Return only true or false.\nContent: ${params.text}\nAuthor: ${params.author}\nPlatform: ${params.platform}` }
+        {
+          role: "user",
+          content: `Should I engage with this content? Return only true or false.\nContent: ${params.text}\nAuthor: ${params.author}\nPlatform: ${params.platform}`,
+        },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.3,
-      max_tokens: 10
+      max_tokens: 10,
     });
 
-    return response.choices[0].message.content?.toLowerCase().includes('true') ?? false;
+    return (
+      response.choices[0].message.content?.toLowerCase().includes("true") ??
+      false
+    );
   }
 
   async determineEngagementAction(tweet: any): Promise<{
-    type: 'reply' | 'retweet' | 'like' | 'ignore';
+    type: "reply" | "retweet" | "like" | "ignore";
     content?: string;
     confidence?: number;
   }> {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: `Analyze this tweet and return a JSON object with fields: type (reply/retweet/like/ignore), content (optional), confidence (0-1)\nTweet: ${JSON.stringify(tweet)}` }
+        {
+          role: "user",
+          content: `Analyze this tweet and return a JSON object with fields: type (reply/retweet/like/ignore), content (optional), confidence (0-1)\nTweet: ${JSON.stringify(
+            tweet
+          )}`,
+        },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.3,
-      max_tokens: 100
+      max_tokens: 100,
     });
 
     const content = response.choices[0].message.content;
@@ -368,13 +395,17 @@ export class GroqAIService implements IAIService {
     const response = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: this.systemPrompt },
-        { role: "user", content: "Generate a concise market analysis focusing on key metrics and trends." }
+        {
+          role: "user",
+          content:
+            "Generate a concise market analysis focusing on key metrics and trends.",
+        },
       ],
       model: "mixtral-8x7b-32768",
       temperature: 0.7,
-      max_tokens: 280
+      max_tokens: 280,
     });
 
-    return response.choices[0].message.content ?? '';
+    return response.choices[0].message.content ?? "";
   }
 }

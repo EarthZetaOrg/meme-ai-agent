@@ -22,7 +22,7 @@ export class RedisService {
             port: config.port,
             password: config.password,
             db: config.db || 0,
-            keyPrefix: config.keyPrefix || 'meme-agent:',
+            keyPrefix: config.keyPrefix || 'meme-ai-agent:',
             retryStrategy: (times) => {
                 if (config.retryStrategy) {
                     return config.retryStrategy(times);
@@ -242,7 +242,7 @@ export const redisService = RedisService.getInstance({
     port: parseInt(process.env.REDIS_PORT || '6379'),
     password: process.env.REDIS_PASSWORD,
     db: parseInt(process.env.REDIS_DB || '0'),
-    keyPrefix: 'meme-agent:',
+    keyPrefix: 'meme-ai-agent:',
     retryStrategy: (times) => {
         if (times > 10)
             return; // Stop retrying after 10 attempts

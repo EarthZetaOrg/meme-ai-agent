@@ -9,7 +9,6 @@ import type { FormEvent } from "react";
 import { ChatMessageBubble } from "@/components/ChatMessageBubble";
 import { IntermediateStep } from "./IntermediateStep";
 
-
 interface ChatWindowProps {
   endpoint: string;
   emptyStateComponent: ReactElement;
@@ -23,15 +22,16 @@ interface ChatWindowProps {
 export function ChatWindow({
   endpoint,
   emptyStateComponent,
-  placeholder = "Ask Jenna about Solana...",
-  titleText = "JENNA AI",
+  placeholder = "Ask EARTHZETA about Solana...",
+  titleText = "EARTHZETA AI",
   emoji = "🤖",
   showIntermediateStepsToggle = true,
   walletAddress,
 }: ChatWindowProps) {
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(false);
-  const [intermediateStepsLoading, setIntermediateStepsLoading] = useState(false);
+  const [intermediateStepsLoading, setIntermediateStepsLoading] =
+    useState(false);
   const [marketData, setMarketData] = useState<any>(null);
 
   const {
@@ -72,8 +72,9 @@ export function ChatWindow({
       }
       if (input.toLowerCase().includes("trending")) {
         const trending = await getBirdeyeTrending();
-        return `Trending tokens:\n${trending.map((t: any) => 
-          `${t.symbol}: $${t.price}`).join("\n")}`;
+        return `Trending tokens:\n${trending
+          .map((t: any) => `${t.symbol}: $${t.price}`)
+          .join("\n")}`;
       }
       return null;
     } catch (error) {
@@ -93,7 +94,11 @@ export function ChatWindow({
         setMessages([
           ...messages,
           { id: messages.length.toString(), role: "user", content: input },
-          { id: (messages.length + 1).toString(), role: "assistant", content: marketResponse },
+          {
+            id: (messages.length + 1).toString(),
+            role: "assistant",
+            content: marketResponse,
+          },
         ]);
         setInput("");
         return;
@@ -132,22 +137,22 @@ export function ChatWindow({
         className="flex flex-col-reverse w-full mb-4 overflow-auto transition-[flex-grow] ease-in-out"
         ref={messageContainerRef}
       >
-        {messages.length === 0 ? (
-          emptyStateComponent
-        ) : (
-          [...messages].reverse().map((m) => (
-            m.role === "system" ? (
-              <IntermediateStep key={m.id} message={m} />
-            ) : (
-              <ChatMessageBubble
-                key={m.id}
-                message={m}
-                aiEmoji={emoji}
-                sources={[]}
-              />
-            )
-          ))
-        )}
+        {messages.length === 0
+          ? emptyStateComponent
+          : [...messages]
+              .reverse()
+              .map((m) =>
+                m.role === "system" ? (
+                  <IntermediateStep key={m.id} message={m} />
+                ) : (
+                  <ChatMessageBubble
+                    key={m.id}
+                    message={m}
+                    aiEmoji={emoji}
+                    sources={[]}
+                  />
+                )
+              )}
       </div>
 
       {/* Input Form */}
@@ -178,11 +183,23 @@ export function ChatWindow({
             className="px-6 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
             disabled={chatEndpointIsLoading || intermediateStepsLoading}
           >
-            {(chatEndpointIsLoading || intermediateStepsLoading) ? (
+            {chatEndpointIsLoading || intermediateStepsLoading ? (
               <span className="flex items-center">
                 <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Processing...
               </span>
@@ -199,10 +216,9 @@ export function ChatWindow({
 }
 
 function getTokenPrice(tokenSymbol: string) {
-    throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }
 
-
 async function getBirdeyeTrending(): Promise<any[]> {
-    throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }

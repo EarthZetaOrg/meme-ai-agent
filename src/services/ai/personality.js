@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 /*
 const exampleResponse: ResponseContext = {
   content: "This is an example response",
-  author: "jenna",
+  author: "EARTHZETA",
   context: {
     key: "value",
     traits: ["friendly", "knowledgeable"],
@@ -74,7 +74,7 @@ export class PersonalityService extends EventEmitter {
             }, null, 2)}`;
             const response = await this.aiService.generateResponse({
                 content: contextualPrompt,
-                author: "jenna",
+                author: "EARTHZETA",
                 platform: "twitter"
             });
             this.updateMetricsFromResponse(response);
@@ -136,7 +136,7 @@ export class PersonalityService extends EventEmitter {
         try {
             const response = await this.aiService.generateResponse({
                 content: "Analyze the current market sentiment and return a single number between 0 and 1, where 0 is extremely bearish and 1 is extremely bullish. Return only the number.",
-                author: "jenna",
+                author: "EARTHZETA",
                 platform: "market"
             });
             const sentiment = parseFloat(response);
@@ -151,7 +151,7 @@ export class PersonalityService extends EventEmitter {
         try {
             const response = await this.aiService.generateResponse({
                 content: "Analyze the viral potential of recent market activity and return a single number between 0 and 1, where 0 is no viral potential and 1 is extremely viral. Return only the number.",
-                author: "jenna",
+                author: "EARTHZETA",
                 platform: "market"
             });
             const potential = parseFloat(response);
@@ -166,7 +166,7 @@ export class PersonalityService extends EventEmitter {
         try {
             const response = await this.aiService.generateResponse({
                 content: "Analyze the community engagement level and return a single number between 0 and 1, where 0 is no engagement and 1 is extremely high engagement. Return only the number.",
-                author: "jenna",
+                author: "EARTHZETA",
                 platform: "social"
             });
             const engagement = parseFloat(response);

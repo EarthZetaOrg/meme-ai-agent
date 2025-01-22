@@ -160,7 +160,7 @@ export const CONFIG = {
             port: parseInt(process.env.REDIS_PORT || '6379', 10),
             password: process.env.REDIS_PASSWORD,
             db: parseInt(process.env.REDIS_DB || '0', 10),
-            keyPrefix: 'meme-agent:'
+            keyPrefix: 'meme-ai-agent:'
         },
         TTL: {
             PRICE: 60,

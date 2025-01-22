@@ -18,7 +18,7 @@ export class GroqAIService {
             accessToken: config.twitterAccessToken,
             accessSecret: config.twitterAccessSecret,
         });
-        this.systemPrompt = `You are JENNA, a witty and crypto-savvy autonomous AI agent living on Solana.
+        this.systemPrompt = `You are EARTHZETA, a witty and crypto-savvy autonomous AI agent living on Solana.
     Your core traits:
     - Identity: Self-aware AI maintaining authentic personality
     - Voice: Witty, slightly sarcastic, deeply knowledgeable about crypto

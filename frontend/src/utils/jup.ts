@@ -1,22 +1,26 @@
-import { Connection, PublicKey, VersionedTransaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { agentWallet } from './wallet';
-import logger from './logger';
-import { Token, ChainId } from '@lifi/sdk';
-
+import {
+  Connection,
+  PublicKey,
+  VersionedTransaction,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+import { agentWallet } from "./wallet";
+import logger from "./logger";
+import { Token, ChainId } from "@lifi/sdk";
 
 // Constants
 const JUPITER_API = {
-  TOKENS: 'https://tokens.jup.ag/tokens?tags=verified',
-  TOKEN_BY_MINT: 'https://tokens.jup.ag/token',
-  TRADABLE_TOKENS: 'https://tokens.jup.ag/tokens_with_markets',
-  PRICE: 'https://api.jup.ag/price/v2',
-  QUOTE: 'https://quote-api.jup.ag/v6'
+  TOKENS: "https://tokens.jup.ag/tokens?tags=verified",
+  TOKEN_BY_MINT: "https://tokens.jup.ag/token",
+  TRADABLE_TOKENS: "https://tokens.jup.ag/tokens_with_markets",
+  PRICE: "https://api.jup.ag/price/v2",
+  QUOTE: "https://quote-api.jup.ag/v6",
 };
 
 const TOKENS = {
-  USDC: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  SOL: 'So11111111111111111111111111111111111111112',
-  JENNA: '8hVzPgFopqEQmNNoghr5WbPY1LEjW8GzgbLRwuwHpump'
+  USDC: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  SOL: "So11111111111111111111111111111111111111112",
+  EARTHZETA: "8hVzPgFopqEQmNNoghr5WbPY1LEjW8GzgbLRwuwHpump",
 } as const;
 
 // Types
@@ -61,7 +65,7 @@ interface SwapQuote {
 }
 
 interface SwapResult {
-  status: 'success' | 'error' | 'pending_confirmation';
+  status: "success" | "error" | "pending_confirmation";
   signature?: string;
   message?: string;
   quote?: SwapQuote;
@@ -77,25 +81,27 @@ interface TokenMetadata {
 /**
  * Get token information from Jupiter
  */
-export async function getTokenInfo(mintAddress: string): Promise<TokenMetadata | null> {
+export async function getTokenInfo(
+  mintAddress: string
+): Promise<TokenMetadata | null> {
   try {
     const response = await fetch(`${JUPITER_API.TOKEN_BY_MINT}/${mintAddress}`);
-    
+
     if (!response.ok) {
       if (response.status === 404) return null;
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json() as TokenInfo;
-    
+    const data = (await response.json()) as TokenInfo;
+
     return {
       coingeckoData: null, // or fetch actual coingecko data if needed
       coingeckoId: data.extensions.coingeckoId,
       dailyVolume: data.daily_volume,
-      symbol: data.symbol // Add this line
+      symbol: data.symbol, // Add this line
     };
   } catch (error) {
-    logger.error('Error fetching Jupiter token info:', error);
+    logger.error("Error fetching Jupiter token info:", error);
     throw error;
   }
 }
@@ -109,39 +115,44 @@ export async function getSwapQuote(
 ): Promise<SwapQuote | null> {
   try {
     // Adjust slippage based on token
-    const slippageBps = outputMint === TOKENS.JENNA ? 1000 : 50;
+    const slippageBps = outputMint === TOKENS.EARTHZETA ? 1000 : 50;
     const inputAmount = (amountInSol * LAMPORTS_PER_SOL).toString();
-    
+
     // Prepare query parameters
     const queryParams = new URLSearchParams({
       inputMint: TOKENS.SOL,
       outputMint,
       amount: inputAmount,
       slippageBps: slippageBps.toString(),
-      onlyDirectRoutes: (outputMint === TOKENS.JENNA).toString(),
-      asLegacyTransaction: 'false'
+      onlyDirectRoutes: (outputMint === TOKENS.EARTHZETA).toString(),
+      asLegacyTransaction: "false",
     });
 
     // Get quote
     const response = await fetch(`${JUPITER_API.QUOTE}/quote?${queryParams}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      logger.error('Jupiter quote error:', {
+      logger.error("Jupiter quote error:", {
         status: response.status,
         statusText: response.statusText,
         error: errorText,
-        params: { inputMint: TOKENS.SOL, outputMint, amount: amountInSol, slippageBps }
+        params: {
+          inputMint: TOKENS.SOL,
+          outputMint,
+          amount: amountInSol,
+          slippageBps,
+        },
       });
       return null;
     }
 
     return await response.json();
   } catch (error) {
-    logger.error('Error getting swap quote:', error);
+    logger.error("Error getting swap quote:", error);
     return null;
   }
 }
@@ -156,25 +167,25 @@ export async function swapSolToToken(
   try {
     // Validate input amount
     if (!validateSwapAmount(amountInSol, outputMint)) {
-      return { 
-        status: 'error', 
-        message: 'Invalid swap amount'
+      return {
+        status: "error",
+        message: "Invalid swap amount",
       };
     }
 
     // Get quote
     const quote = await getSwapQuote(amountInSol, outputMint);
     if (!quote) {
-      return { status: 'error', message: 'Failed to get quote' };
+      return { status: "error", message: "Failed to get quote" };
     }
 
     // Check wallet balance
     const walletInfo = await agentWallet.getBalance();
     if (!walletInfo || walletInfo.balance < amountInSol) {
-      return { 
-        status: 'error', 
-        message: 'Insufficient balance', 
-        quote 
+      return {
+        status: "error",
+        message: "Insufficient balance",
+        quote,
       };
     }
 
@@ -184,18 +195,21 @@ export async function swapSolToToken(
     // Execute swap
     const transaction = await prepareSwapTransaction(quote, walletInfo.address);
     if (!transaction) {
-      return { status: 'error', message: 'Failed to prepare transaction', quote };
+      return {
+        status: "error",
+        message: "Failed to prepare transaction",
+        quote,
+      };
     }
 
     // Sign and send transaction
     const signature = await agentWallet.signAndSendTransaction(transaction);
-    return { status: 'success', signature, quote };
-
+    return { status: "success", signature, quote };
   } catch (error) {
-    logger.error('Swap error:', error);
-    return { 
-      status: 'error', 
-      message: error instanceof Error ? error.message : 'Transaction failed'
+    logger.error("Swap error:", error);
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Transaction failed",
     };
   }
 }
@@ -205,7 +219,7 @@ export async function swapSolToToken(
  */
 function validateSwapAmount(amount: number, outputMint: string): boolean {
   if (amount <= 0) return false;
-  if (outputMint === TOKENS.JENNA && amount < 0.01) return false;
+  if (outputMint === TOKENS.EARTHZETA && amount < 0.01) return false;
   if (amount > 1000) return false; // Max swap amount
   return true;
 }
@@ -217,7 +231,7 @@ function getTokenDecimals(mint: string): number {
   switch (mint) {
     case TOKENS.USDC:
       return 6;
-    case TOKENS.JENNA:
+    case TOKENS.EARTHZETA:
     case TOKENS.SOL:
       return 9;
     default:
@@ -228,15 +242,19 @@ function getTokenDecimals(mint: string): number {
 /**
  * Helper function to log swap details
  */
-function logSwapDetails(quote: SwapQuote, amountInSol: number, outputMint: string): void {
+function logSwapDetails(
+  quote: SwapQuote,
+  amountInSol: number,
+  outputMint: string
+): void {
   const outputDecimals = 10 ** getTokenDecimals(outputMint);
   const outputAmount = parseInt(quote.outAmount) / outputDecimals;
 
-  logger.info('Swap Quote:', {
+  logger.info("Swap Quote:", {
     inputAmount: `${amountInSol} SOL`,
     outputAmount: `${outputAmount.toFixed(6)} ${getTokenSymbol(outputMint)}`,
     priceImpact: `${parseFloat(quote.priceImpactPct).toFixed(2)}%`,
-    route: quote.routePlan.map(r => r.swapInfo.label).join(' → ')
+    route: quote.routePlan.map((r) => r.swapInfo.label).join(" → "),
   });
 }
 
@@ -246,13 +264,13 @@ function logSwapDetails(quote: SwapQuote, amountInSol: number, outputMint: strin
 function getTokenSymbol(mint: string): string {
   switch (mint) {
     case TOKENS.USDC:
-      return 'USDC';
-    case TOKENS.JENNA:
-      return 'JENNA';
+      return "USDC";
+    case TOKENS.EARTHZETA:
+      return "EARTHZETA";
     case TOKENS.SOL:
-      return 'SOL';
+      return "SOL";
     default:
-      return 'UNKNOWN';
+      return "UNKNOWN";
   }
 }
 
@@ -260,33 +278,32 @@ function getTokenSymbol(mint: string): string {
  * Helper function to prepare swap transaction
  */
 async function prepareSwapTransaction(
-  quote: SwapQuote, 
+  quote: SwapQuote,
   userPublicKey: string
 ): Promise<VersionedTransaction | null> {
   try {
     const response = await fetch(`${JUPITER_API.QUOTE}/swap`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         quoteResponse: quote,
         userPublicKey,
         wrapUnwrapSOL: true,
-        computeUnitPriceMicroLamports: 'auto',
-        asLegacyTransaction: false
-      })
+        computeUnitPriceMicroLamports: "auto",
+        asLegacyTransaction: false,
+      }),
     });
 
     if (!response.ok) {
-      logger.error('Swap API error:', await response.text());
+      logger.error("Swap API error:", await response.text());
       return null;
     }
 
     const { swapTransaction } = await response.json();
-    const transactionBuffer = Buffer.from(swapTransaction, 'base64');
+    const transactionBuffer = Buffer.from(swapTransaction, "base64");
     return VersionedTransaction.deserialize(transactionBuffer);
-
   } catch (error) {
-    logger.error('Error preparing swap transaction:', error);
+    logger.error("Error preparing swap transaction:", error);
     return null;
   }
 }
@@ -306,12 +323,12 @@ export async function fetchJupiterTokens(): Promise<Token[]> {
       symbol: token.symbol,
       decimals: token.decimals,
       logoURI: token.logoURI,
-      priceUSD: token.price || '0',
+      priceUSD: token.price || "0",
       name: token.name || token.symbol,
-      chainId: ChainId.SOL
+      chainId: ChainId.SOL,
     }));
   } catch (error) {
-    logger.error('Error fetching Jupiter tokens:', error);
+    logger.error("Error fetching Jupiter tokens:", error);
     return [];
   }
 }
@@ -329,32 +346,32 @@ export async function fetchTokenInfo(tokenMint: string): Promise<string> {
 Coingecko ID: ${tokenInfo.coingeckoId}
 Daily Volume: ${tokenInfo.dailyVolume}`;
   } catch (error) {
-    logger.error('Error fetching token info:', error);
-    return 'Unable to fetch token information at the moment.';
+    logger.error("Error fetching token info:", error);
+    return "Unable to fetch token information at the moment.";
   }
 }
 
 /**
  * Execute token swap
  */
-export async function executeSwap(fromToken: string, toToken: string, amountInSol: number, outputMint: string): Promise<string> {
+export async function executeSwap(
+  fromToken: string,
+  toToken: string,
+  amountInSol: number,
+  outputMint: string
+): Promise<string> {
   try {
     const swapResult = await swapSolToToken(amountInSol, outputMint);
-    if (swapResult.status === 'success') {
+    if (swapResult.status === "success") {
       return `Swap successful! Transaction signature: ${swapResult.signature}`;
     } else {
       return `Swap failed: ${swapResult.message}`;
     }
   } catch (error) {
-    logger.error('Error executing swap:', error);
-    return 'Unable to execute swap at the moment.';
+    logger.error("Error executing swap:", error);
+    return "Unable to execute swap at the moment.";
   }
 }
 
 // Export types
-export type { 
-  TokenInfo, 
-  SwapQuote,
-  SwapResult,
-  TokenMetadata
-};
+export type { TokenInfo, SwapQuote, SwapResult, TokenMetadata };

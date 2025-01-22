@@ -200,7 +200,7 @@ export class ChatService {
         // Auto mode configuration
         const autoConfig = {
             ...baseConfig,
-            welcomeMessage: 'Auto mode activated. JENNA will operate autonomously.',
+            welcomeMessage: 'Auto mode activated. EARTHZETA will operate autonomously.',
             commands: [
                 {
                     name: 'pause',
@@ -252,7 +252,7 @@ export class ChatService {
                 });
                 if (response) {
                     this.recordMessage('assistant', response);
-                    console.log('\nJENNA:', response);
+                    console.log('\nEARTHZETA:', response);
                 }
                 else {
                     console.log('\nSorry, there was an error. Please try again.');
@@ -297,7 +297,7 @@ export class ChatService {
         }
         this.modeManager.stop();
         this.readline.close();
-        console.log('\nGoodbye! JENNA shutting down...');
+        console.log('\nGoodbye! EARTHZETA shutting down...');
         process.exit(0);
     }
     async getMarketData(symbol) {

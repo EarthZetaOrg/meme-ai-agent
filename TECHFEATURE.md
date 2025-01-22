@@ -5,7 +5,7 @@
 ### Core Components and File Architecture
 
 ```
-meme-agent/
+meme-ai-agent/
 ├── src/
 │   ├── agents/                    # AI Agent System
 │   │   ├── models/               # AI Model Implementations
@@ -43,7 +43,7 @@ meme-agent/
 │   │   └── error/              # Error Handling
 │   └── utils/                  # Utility Functions
 ├── characters/                  # Character Configurations
-│   └── jenna.character.json    # Jenna Character Definition
+│   └── EARTHZETA.character.json    # EARTHZETA Character Definition
 ├── tests/                      # Test Suites
 │   ├── unit/                  # Unit Tests
 │   │   └── services/
@@ -70,7 +70,7 @@ meme-agent/
 3. **Character System Integration**
    - `src/personality/types.ts`: Character schema definitions
    - `src/personality/loadCharacter.ts`: Character loading logic
-   - `characters/jenna.character.json`: Character configuration
+   - `characters/EARTHZETA.character.json`: Character configuration
 
 4. **Market Data Integration**
    - `src/services/analysis/market-analysis.ts`: Market data processing

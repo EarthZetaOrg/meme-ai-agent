@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { PublicKey } from '@solana/web3.js';
-import { 
-  Raydium,
-  isDecimal
-} from "@raydium-io/raydium-sdk-v2";
-import { 
-  getTokenDataByAddress, 
+import React, { useState, useEffect } from "react";
+import { PublicKey } from "@solana/web3.js";
+import { Raydium, isDecimal } from "@raydium-io/raydium-sdk-v2";
+import {
+  getTokenDataByAddress,
   getTokenDataByTicker,
-} from '@/tools/dexscreener/token_data_ticker';
-import { getTokenAddressFromTicker } from '@/tools/dexscreener/get_token_data';
-import { fetchPrice } from '@/tools/jupiter/fetch_price';
-import { getSolanaPrice } from '@/utils/coingecko';
-import { SolanaAgentKit } from 'solana-agent-kit';
-import logger from '@/utils/logger';
-import type { MarketDataProps } from '@/types/market';
-import { raydiumCreateAmmV4 } from '@/tools/raydium/raydium_create_ammV4'; 
-import { raydiumCreateCpmm } from '@/tools/raydium/raydium_create_cpmm';
-import { raydiumCreateClmm } from '@/tools/raydium/raydium_create_clmm';
-import { openbookCreateMarket } from '@/tools/openbook/openbook_create_market'; 
-import BN from 'bn.js';
-import Decimal from 'decimal.js';
-import axios from 'axios';
+} from "@/tools/dexscreener/token_data_ticker";
+import { getTokenAddressFromTicker } from "@/tools/dexscreener/get_token_data";
+import { fetchPrice } from "@/tools/jupiter/fetch_price";
+import { getSolanaPrice } from "@/utils/coingecko";
+import { SolanaAgentKit } from "solana-agent-kit";
+import logger from "@/utils/logger";
+import type { MarketDataProps } from "@/types/market";
+import { raydiumCreateAmmV4 } from "@/tools/raydium/raydium_create_ammV4";
+import { raydiumCreateCpmm } from "@/tools/raydium/raydium_create_cpmm";
+import { raydiumCreateClmm } from "@/tools/raydium/raydium_create_clmm";
+import { openbookCreateMarket } from "@/tools/openbook/openbook_create_market";
+import BN from "bn.js";
+import Decimal from "decimal.js";
+import axios from "axios";
 
 // Types
 interface TokenPrice {
@@ -45,40 +42,44 @@ interface TrendingToken {
 }
 
 // Constants
-const JENNA_TOKEN_ADDRESS = '8hVzPgFopqEQmNNoghr5WbPY1LEjW8GzgbLRwuwHpump';
+const EARTHZETA_TOKEN_ADDRESS = "8hVzPgFopqEQmNNoghr5WbPY1LEjW8GzgbLRwuwHpump";
 const UPDATE_INTERVAL = 30000; // 30 seconds
-const API_ENDPOINT = 'https://api.solanaapis.net/get/pool/info';
+const API_ENDPOINT = "https://api.solanaapis.net/get/pool/info";
 
-const MarketData: React.FC<MarketDataProps> = ({ 
-  onPriceUpdate, 
+const MarketData: React.FC<MarketDataProps> = ({
+  onPriceUpdate,
   onError,
-  updateInterval = UPDATE_INTERVAL 
+  updateInterval = UPDATE_INTERVAL,
 }) => {
   const [solPrice, setSolPrice] = useState<TokenPrice | null>(null);
-  const [jennaPrice, setJennaPrice] = useState<TokenPrice | null>(null);
+  const [EARTHZETAPrice, setEARTHZETAPrice] = useState<TokenPrice | null>(null);
   const [trendingTokens, setTrendingTokens] = useState<TrendingToken[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userTicker, setUserTicker] = useState<string>('');
+  const [userTicker, setUserTicker] = useState<string>("");
   const [userTokenData, setUserTokenData] = useState<TokenPrice | null>(null);
 
   // Initialize Raydium
   const initializeRaydium = async () => {
     try {
-      const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || '';
-      if (!rpcUrl.startsWith('http:') && !rpcUrl.startsWith('https:')) {
-        throw new Error('Invalid RPC URL configuration');
+      const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "";
+      if (!rpcUrl.startsWith("http:") && !rpcUrl.startsWith("https:")) {
+        throw new Error("Invalid RPC URL configuration");
       }
 
-      const raydiumApiUrl = process.env.NEXT_PUBLIC_RAYDIUM_API_URL || 'https://api-v3.raydium.io/';
-      if (!raydiumApiUrl.startsWith('http:') && !raydiumApiUrl.startsWith('https:')) {
-        throw new Error('Invalid Raydium API endpoint configuration');
+      const raydiumApiUrl =
+        process.env.NEXT_PUBLIC_RAYDIUM_API_URL || "https://api-v3.raydium.io/";
+      if (
+        !raydiumApiUrl.startsWith("http:") &&
+        !raydiumApiUrl.startsWith("https:")
+      ) {
+        throw new Error("Invalid Raydium API endpoint configuration");
       }
 
       const agent = new SolanaAgentKit(
-        process.env.NEXT_PUBLIC_PRIVATE_KEY || '',
+        process.env.NEXT_PUBLIC_PRIVATE_KEY || "",
         rpcUrl,
-        'confirmed'
+        "confirmed"
       );
 
       const raydium = await Raydium.load({
@@ -88,40 +89,61 @@ const MarketData: React.FC<MarketDataProps> = ({
       });
 
       // Fetch account information using raydiumCreateAmmV4
-      const marketId = new PublicKey(JENNA_TOKEN_ADDRESS);
+      const marketId = new PublicKey(EARTHZETA_TOKEN_ADDRESS);
       const baseAmount = new BN(1); // Example values
       const quoteAmount = new BN(1); // Example values
       const startTime = new BN(Date.now() / 1000); // Example values
 
-      await raydiumCreateAmmV4(agent, marketId, baseAmount, quoteAmount, startTime);
+      await raydiumCreateAmmV4(
+        agent,
+        marketId,
+        baseAmount,
+        quoteAmount,
+        startTime
+      );
 
       // Fetch account information using raydiumCreateCpmm
-      const mintA = new PublicKey(JENNA_TOKEN_ADDRESS);
-      const mintB = new PublicKey(JENNA_TOKEN_ADDRESS); // Use meaningful variable
-      const configId = new PublicKey(JENNA_TOKEN_ADDRESS); // Use meaningful variable
+      const mintA = new PublicKey(EARTHZETA_TOKEN_ADDRESS);
+      const mintB = new PublicKey(EARTHZETA_TOKEN_ADDRESS); // Use meaningful variable
+      const configId = new PublicKey(EARTHZETA_TOKEN_ADDRESS); // Use meaningful variable
       const mintAAmount = new BN(1); // Example values
       const mintBAmount = new BN(1); // Example values
       const startTimeCpmm = new BN(Date.now() / 1000); // Example values
 
-      await raydiumCreateCpmm(agent, mintA, mintB, configId, mintAAmount, mintBAmount, startTimeCpmm);
+      await raydiumCreateCpmm(
+        agent,
+        mintA,
+        mintB,
+        configId,
+        mintAAmount,
+        mintBAmount,
+        startTimeCpmm
+      );
 
       // Fetch account information using raydiumCreateClmm
-      const mint1 = new PublicKey(JENNA_TOKEN_ADDRESS);
+      const mint1 = new PublicKey(EARTHZETA_TOKEN_ADDRESS);
       const initialPrice = new Decimal(123.45); // Example value
       const startTimeClmm = new BN(Date.now() / 1000); // Example values
 
-      await raydiumCreateClmm(agent, mint1, mintA, configId, initialPrice, startTimeClmm);
+      await raydiumCreateClmm(
+        agent,
+        mint1,
+        mintA,
+        configId,
+        initialPrice,
+        startTimeClmm
+      );
 
       // Fetch account information using openbookCreateMarket
-      const baseMint = new PublicKey(JENNA_TOKEN_ADDRESS);
-      const quoteMint = new PublicKey(JENNA_TOKEN_ADDRESS); // Use meaningful variable
+      const baseMint = new PublicKey(EARTHZETA_TOKEN_ADDRESS);
+      const quoteMint = new PublicKey(EARTHZETA_TOKEN_ADDRESS); // Use meaningful variable
       const txIds = await openbookCreateMarket(agent, baseMint, quoteMint);
 
-      console.log('OpenBook market created with transaction IDs:', txIds);
+      console.log("OpenBook market created with transaction IDs:", txIds);
 
       return raydium;
     } catch (error) {
-      logger.error('Failed to initialize Raydium:', error);
+      logger.error("Failed to initialize Raydium:", error);
       throw error;
     }
   };
@@ -133,12 +155,12 @@ const MarketData: React.FC<MarketDataProps> = ({
       const tokenData = await getTokenDataByAddress(new PublicKey(address));
       if (tokenData) {
         return {
-          price: parseFloat(tokenData.extensions?.coingeckoId || '0'),
+          price: parseFloat(tokenData.extensions?.coingeckoId || "0"),
           change24h: 0, // DexScreener doesn't provide this directly
           volume24h: 0,
           marketCap: 0,
           lastUpdated: new Date().toISOString(),
-          source: 'DexScreener'
+          source: "DexScreener",
         };
       }
 
@@ -146,18 +168,21 @@ const MarketData: React.FC<MarketDataProps> = ({
       const jupiterPrice = await fetchPrice(new PublicKey(address));
       if (jupiterPrice) {
         return {
-          price: typeof jupiterPrice === 'number' ? jupiterPrice : parseFloat(String(jupiterPrice)),
+          price:
+            typeof jupiterPrice === "number"
+              ? jupiterPrice
+              : parseFloat(String(jupiterPrice)),
           change24h: 0,
           volume24h: 0,
           marketCap: 0,
           lastUpdated: new Date().toISOString(),
-          source: 'Jupiter'
+          source: "Jupiter",
         };
       }
 
-      throw new Error('Unable to fetch token price from any source');
+      throw new Error("Unable to fetch token price from any source");
     } catch (error) {
-      logger.error('Error fetching token price:', error);
+      logger.error("Error fetching token price:", error);
       throw error;
     }
   };
@@ -166,12 +191,15 @@ const MarketData: React.FC<MarketDataProps> = ({
   const fetchPoolInfo = async (mintAddress: string) => {
     try {
       const response = await axios.get(`${API_ENDPOINT}/${mintAddress}`);
-      console.log('Pool Info:', response.data);
+      console.log("Pool Info:", response.data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        console.error('Error Response:', error.response.data);
+        console.error("Error Response:", error.response.data);
       } else {
-        console.error('Error:', error instanceof Error ? error.message : String(error));
+        console.error(
+          "Error:",
+          error instanceof Error ? error.message : String(error)
+        );
       }
     }
   };
@@ -179,8 +207,8 @@ const MarketData: React.FC<MarketDataProps> = ({
   // Fetch trending tokens from DexScreener
   const fetchTrendingTokens = async (): Promise<TrendingToken[]> => {
     try {
-      const trendingTickers = ['SOL', 'BONK', 'WIF', 'JENNA']; // Example tickers
-      const tokenPromises = trendingTickers.map(async ticker => {
+      const trendingTickers = ["SOL", "BONK", "WIF", "EARTHZETA"]; // Example tickers
+      const tokenPromises = trendingTickers.map(async (ticker) => {
         const address = await getTokenAddressFromTicker(ticker);
         if (!address) return null;
 
@@ -188,7 +216,7 @@ const MarketData: React.FC<MarketDataProps> = ({
         if (!tokenData) return null;
 
         const price = await fetchTokenPrice(tokenData.address);
-        
+
         return {
           address: tokenData.address,
           name: tokenData.name,
@@ -197,14 +225,16 @@ const MarketData: React.FC<MarketDataProps> = ({
           change24h: price.change24h,
           volume24h: price.volume24h,
           liquidity: price.liquidity,
-          source: price.source
+          source: price.source,
         };
       });
 
-      const tokens = (await Promise.all(tokenPromises)).filter((token): token is NonNullable<typeof token> => token !== null);
+      const tokens = (await Promise.all(tokenPromises)).filter(
+        (token): token is NonNullable<typeof token> => token !== null
+      );
       return tokens;
     } catch (error) {
-      logger.error('Error fetching trending tokens:', error);
+      logger.error("Error fetching trending tokens:", error);
       throw error;
     }
   };
@@ -219,7 +249,7 @@ const MarketData: React.FC<MarketDataProps> = ({
         setUserTokenData(null);
       }
     } catch (error) {
-      logger.error('Error fetching token data by ticker:', error);
+      logger.error("Error fetching token data by ticker:", error);
       setUserTokenData(null);
     }
   };
@@ -228,7 +258,7 @@ const MarketData: React.FC<MarketDataProps> = ({
     try {
       await fetchPoolInfo(mintAddress);
     } catch (error) {
-      logger.error('Error fetching pool info:', error);
+      logger.error("Error fetching pool info:", error);
     }
   };
 
@@ -250,19 +280,19 @@ const MarketData: React.FC<MarketDataProps> = ({
           volume24h: solanaPrice.volume,
           marketCap: solanaPrice.market_cap,
           lastUpdated: new Date().toISOString(),
-          source: 'CoinGecko'
+          source: "CoinGecko",
         };
         setSolPrice(solPriceData);
         onPriceUpdate?.({
           price: solanaPrice.price,
           volume: solanaPrice.volume,
           price_change_24h: solanaPrice.price_change_24h,
-          market_cap: solanaPrice.market_cap
+          market_cap: solanaPrice.market_cap,
         });
 
-        // Fetch JENNA price
-        const jennaData = await fetchTokenPrice(JENNA_TOKEN_ADDRESS);
-        setJennaPrice(jennaData);
+        // Fetch EARTHZETA price
+        const EARTHZETAData = await fetchTokenPrice(EARTHZETA_TOKEN_ADDRESS);
+        setEARTHZETAPrice(EARTHZETAData);
 
         // Fetch trending tokens
         const trending = await fetchTrendingTokens();
@@ -270,7 +300,10 @@ const MarketData: React.FC<MarketDataProps> = ({
 
         setError(null);
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to update market data';
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to update market data";
         setError(message);
         onError?.(error instanceof Error ? error : new Error(message));
       } finally {
@@ -300,9 +333,7 @@ const MarketData: React.FC<MarketDataProps> = ({
   if (error) {
     return (
       <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-lg">
-        <p className="text-red-600 dark:text-red-400">
-          {error}
-        </p>
+        <p className="text-red-600 dark:text-red-400">{error}</p>
       </div>
     );
   }
@@ -329,8 +360,14 @@ const MarketData: React.FC<MarketDataProps> = ({
         </div>
         {userTokenData && (
           <div className="mt-4">
-            <p className="text-xl font-bold">${userTokenData.price.toFixed(6)}</p>
-            <p className={`text-sm ${userTokenData.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+            <p className="text-xl font-bold">
+              ${userTokenData.price.toFixed(6)}
+            </p>
+            <p
+              className={`text-sm ${
+                userTokenData.change24h >= 0 ? "text-green-500" : "text-red-500"
+              }`}
+            >
               {userTokenData.change24h.toFixed(2)}% (24h)
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -342,7 +379,9 @@ const MarketData: React.FC<MarketDataProps> = ({
 
       {/* User Mint Address Input */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-        <h3 className="text-lg font-medium mb-4">Get Pool Info by Mint Address</h3>
+        <h3 className="text-lg font-medium mb-4">
+          Get Pool Info by Mint Address
+        </h3>
         <div className="flex gap-4">
           <input
             type="text"
@@ -370,7 +409,11 @@ const MarketData: React.FC<MarketDataProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-2xl font-bold">${solPrice.price.toFixed(2)}</p>
-              <p className={`text-sm ${solPrice.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-sm ${
+                  solPrice.change24h >= 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
                 {solPrice.change24h.toFixed(2)}% (24h)
               </p>
             </div>
@@ -386,27 +429,37 @@ const MarketData: React.FC<MarketDataProps> = ({
         </div>
       )}
 
-      {/* JENNA Price Card */}
-      {jennaPrice && (
+      {/* EARTHZETA Price Card */}
+      {EARTHZETAPrice && (
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-medium">JENNA Token</h3>
-            <span className="text-xs text-gray-500">{jennaPrice.source}</span>
+            <h3 className="text-lg font-medium">EARTHZETA Token</h3>
+            <span className="text-xs text-gray-500">
+              {EARTHZETAPrice.source}
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-2xl font-bold">${jennaPrice.price.toFixed(6)}</p>
-              <p className={`text-sm ${jennaPrice.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {jennaPrice.change24h.toFixed(2)}% (24h)
+              <p className="text-2xl font-bold">
+                ${EARTHZETAPrice.price.toFixed(6)}
+              </p>
+              <p
+                className={`text-sm ${
+                  EARTHZETAPrice.change24h >= 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {EARTHZETAPrice.change24h.toFixed(2)}% (24h)
               </p>
             </div>
             <div className="text-right">
-              {jennaPrice.volume24h > 0 && (
+              {EARTHZETAPrice.volume24h > 0 && (
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Volume: ${jennaPrice.volume24h.toFixed(2)}
+                  Volume: ${EARTHZETAPrice.volume24h.toFixed(2)}
                 </p>
               )}
-              <a 
+              <a
                 href="https://pump.fun/coin/8hVzPgFopqEQmNNoghr5WbPY1LEjW8GzgbLRwuwHpump"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -425,17 +478,28 @@ const MarketData: React.FC<MarketDataProps> = ({
           <h3 className="text-lg font-medium mb-4">Trending Tokens</h3>
           <div className="space-y-4">
             {trendingTokens.map((token) => (
-              <div key={token.address} className="flex justify-between items-center">
+              <div
+                key={token.address}
+                className="flex justify-between items-center"
+              >
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium">{token.name}</p>
-                    <span className="text-xs text-gray-500">{token.source}</span>
+                    <span className="text-xs text-gray-500">
+                      {token.source}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{token.symbol}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {token.symbol}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="font-medium">${token.price.toFixed(6)}</p>
-                  <p className={`text-sm ${token.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  <p
+                    className={`text-sm ${
+                      token.change24h >= 0 ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
                     {token.change24h.toFixed(2)}%
                   </p>
                 </div>

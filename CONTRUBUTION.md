@@ -1,7 +1,7 @@
-# JENNA - Open Source Contribution Guide
+# EARTHZETA - Open Source Contribution Guide
 
-## About JENNA
-JENNA (Social Onchain Intelligence Agent) is an advanced AI system built for the Solana ecosystem, combining social intelligence with decentralized trading capabilities. We welcome community contributions to help improve and evolve the project.
+## About EARTHZETA
+EARTHZETA (Social Onchain Intelligence Agent) is an advanced AI system built for the Solana ecosystem, combining social intelligence with decentralized trading capabilities. We welcome community contributions to help improve and evolve the project.
 
 ## 🎯 Priority Features & Improvements
 
@@ -117,7 +117,7 @@ JENNA (Social Onchain Intelligence Agent) is an advanced AI system built for the
 ## 📞 Get Help & Support
 - Check GitHub Issues for existing problems
 - Use GitHub Discussions for questions
-- Follow @jennamagent on Twitter for updates
+- Follow @EARTHZETAmagent on Twitter for updates
 
 ## 👥 Recognition
 All contributors will be recognized in:
@@ -126,4 +126,4 @@ All contributors will be recognized in:
 - Release notes
 - Community spotlights on Twitter
 
-We appreciate all contributions, big and small, that help make JENNA better!
+We appreciate all contributions, big and small, that help make EARTHZETA better!

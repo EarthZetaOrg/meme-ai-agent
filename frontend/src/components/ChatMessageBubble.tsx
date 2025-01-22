@@ -9,13 +9,17 @@ interface ChatMessageBubbleProps {
   sources?: any[];
 }
 
-export function ChatMessageBubble({ message, aiEmoji = "🤖", sources = [] }: ChatMessageBubbleProps) {
+export function ChatMessageBubble({
+  message,
+  aiEmoji = "🤖",
+  sources = [],
+}: ChatMessageBubbleProps) {
   const [formattedContent, setFormattedContent] = useState(message.content);
 
   useEffect(() => {
     // Process any special content formatting if needed
     let content = message.content;
-    
+
     // Handle code blocks
     content = content.replace(/```(.*?)```/, (match, code) => {
       return `\n\`\`\`\n${code.trim()}\n\`\`\`\n`;
@@ -43,11 +47,9 @@ export function ChatMessageBubble({ message, aiEmoji = "🤖", sources = [] }: C
         } rounded-2xl px-4 py-2 max-w-[80%] overflow-hidden`}
       >
         {message.role === "assistant" && (
-          <div className="mb-1 text-sm opacity-50">
-            {aiEmoji} JENNA AI
-          </div>
+          <div className="mb-1 text-sm opacity-50">{aiEmoji} EARTHZETA AI</div>
         )}
-        
+
         <div className="prose max-w-none dark:prose-invert">
           <ReactMarkdown
             components={{

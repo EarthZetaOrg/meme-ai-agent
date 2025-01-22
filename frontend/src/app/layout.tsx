@@ -1,13 +1,13 @@
 // src/app/layout.tsx
-import { Inter } from 'next/font/google';
-import './globals.css';
-import ClientLayout from '../components/ClientLayout';
+import { Inter } from "next/font/google";
+import "./globals.css";
+import ClientLayout from "../components/ClientLayout";
 
-const inter = Inter({ subsets: ['latin'] });
- 
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata = {
-  title: 'JENNA AI Trading Assistant',
-  description: 'AI-powered Solana trading assistant and market analyzer',
+  title: "EARTHZETA AI Trading Assistant",
+  description: "AI-powered Solana trading assistant and market analyzer",
 };
 
 export default function RootLayout({

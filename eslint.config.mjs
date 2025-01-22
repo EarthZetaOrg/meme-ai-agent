@@ -23,10 +23,10 @@ export default [
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
-        project: ['/home/ubuntu/repos/meme-agent/tsconfig.json'],
-        tsconfigRootDir: '/home/ubuntu/repos/meme-agent',
+        project: ['/home/ubuntu/repos/meme-ai-agent/tsconfig.json'],
+        tsconfigRootDir: '/home/ubuntu/repos/meme-ai-agent',
         paths: {
-          "@/*": ["/home/ubuntu/repos/meme-agent/src/*"]
+          "@/*": ["/home/ubuntu/repos/meme-ai-agent/src/*"]
         },
       },
     },
