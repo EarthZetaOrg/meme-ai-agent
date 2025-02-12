@@ -1,7 +1,23 @@
-# EARTHZETA: Advanced Social Blockchain Intelligence System
+# Meme AI Agent - Earthzeta: Advanced Social Blockchain Intelligence System
+
+# 👋 Contact Me
+
+### 
+Telegram: https://t.me/earthzeta
+###
+<div style="display:flex; justify-content:space-evenly"> 
+    <a href="https://t.me/earthzeta" target="_blank"><img alt="Telegram"
+        src="https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white"/></a>
+    <a href="https://discordapp.com/users/339619501081362432" target="_blank"><img alt="Discord"
+        src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"/></a>
+    <a href="mailto:johncriswick25@gmail.com" target="_blank"><img alt="Email"
+        src="https://img.shields.io/badge/Gmail-CE5753?style=for-the-badge&logo=gmail&logoColor=white"/></a> 
+</div>
+
+#### Feel free to contact me if you need any help.
 
 ## Overview
-EARTHZETA is an advanced artificial intelligence system built on the Solana blockchain, integrating sophisticated machine learning capabilities with social media interaction and decentralized trading functionality. The system represents a significant advancement in blockchain-based AI agents, offering autonomous operation while maintaining high standards of reliability and security.
+Earthzeta is an advanced artificial intelligence system built on the Solana blockchain, integrating sophisticated machine learning capabilities with social media interaction and decentralized trading functionality. The system represents a significant advancement in blockchain-based AI agents, offering autonomous operation while maintaining high standards of reliability and security.
 
 The platform's native token, `$EARTHZETA`, facilitates governance and access to premium features through the PumpFun decentralized exchange.
 
