@@ -1,4 +1,5 @@
-# Meme AI Agent - Earthzeta: Advanced Social Blockchain Intelligence System
+# Meme AI Agent
+Earthzeta: Advanced Social Blockchain Intelligence System
 
 # 👋 Contact Me
 
