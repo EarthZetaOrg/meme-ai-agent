@@ -8,10 +8,31 @@
     "dev": "npx tsc && npx rollup -c -w",
     "rebuild": "npm rebuild"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["meme", "ai", "agent", "meme-ai-agent"],
+  "author": "earthzetaorg",
+  "license": "MIT",
+  "description": "A meme AI agent",
+  "homepage": "https://github.com/earthzetaorg/meme-ai-agent",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/earthzetaorg/meme-ai-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/earthzetaorg/meme-ai-agent/issues"
+  },
+  "contributors": [
+    {
+      "name": "earthzetaorg",
+      "url": "https://github.com/earthzetaorg"
+    }
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/earthzetaorg"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@0glabs/0g-ts-sdk": "0.2.1",
     "@3land/listings-sdk": "^0.0.5",
