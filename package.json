@@ -103,7 +103,7 @@
     "typescript": "^5.7.3",
     "undici": "7.2.1",
     "utf-8-validate": "6.0.5",
-    "vitest": "2.1.4",
+    "vitest": "2.1.9",
     "whatwg-url": "14.1.0",
     "winston": "3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
@@ -149,6 +149,6 @@
     "tsup": "8.3.5",
     "tsyringe": "^4.7.0",
     "typescript": "4.9.5",
-    "vitest": "2.1.4"
+    "vitest": "2.1.9"
   }
 }
